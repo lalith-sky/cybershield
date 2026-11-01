@@ -19,6 +19,11 @@ from config import get_config
 from extensions import db, login_manager
 
 PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+INSTANCE_PATH = (
+    os.path.join("/tmp", "cybershield")
+    if os.environ.get("VERCEL")
+    else os.path.join(PROJECT_ROOT, "instance")
+)
 
 
 def create_app(config_class=None):
@@ -26,7 +31,7 @@ def create_app(config_class=None):
         __name__,
         template_folder=os.path.join(PROJECT_ROOT, "templates"),
         static_folder=os.path.join(PROJECT_ROOT, "static"),
-        instance_path=os.path.join(PROJECT_ROOT, "instance"),
+        instance_path=INSTANCE_PATH,
         instance_relative_config=True,
     )
     app.config.from_object(config_class or get_config())

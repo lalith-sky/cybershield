@@ -51,25 +51,29 @@ def setup_logging(app):
     - ml.log: ML model predictions and performance
     """
     
-    # Create logs directory
-    log_dir = os.path.join(app.root_path, "..", "logs")
-    os.makedirs(log_dir, exist_ok=True)
-    
     # Determine log level
     log_level = logging.DEBUG if app.config.get("DEBUG") else logging.INFO
     
     # Remove default Flask handlers
     app.logger.handlers = []
     
-    # Console handler for development
-    if app.config.get("DEBUG"):
-        console_handler = logging.StreamHandler()
-        console_handler.setLevel(logging.DEBUG)
-        console_formatter = logging.Formatter(
-            "[%(asctime)s] %(levelname)s in %(module)s: %(message)s"
-        )
-        console_handler.setFormatter(console_formatter)
-        app.logger.addHandler(console_handler)
+    console_handler = logging.StreamHandler()
+    console_handler.setLevel(logging.DEBUG if app.config.get("DEBUG") else logging.INFO)
+    console_formatter = logging.Formatter(
+        "[%(asctime)s] %(levelname)s in %(module)s: %(message)s"
+    )
+    console_handler.setFormatter(console_formatter)
+    app.logger.addHandler(console_handler)
+
+    # Vercel's deployed filesystem is read-only; platform logs replace files.
+    if os.environ.get("VERCEL"):
+        app.logger.setLevel(log_level)
+        app.logger.info("Logging system initialized (serverless console mode)")
+        return
+
+    # Create logs directory for local development.
+    log_dir = os.path.join(app.root_path, "..", "logs")
+    os.makedirs(log_dir, exist_ok=True)
     
     # Application log file
     app_handler = RotatingFileHandler(

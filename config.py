@@ -15,6 +15,11 @@ import os
 from datetime import timedelta
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+RUNTIME_DIR = (
+    os.path.join("/tmp", "cybershield")
+    if os.environ.get("VERCEL")
+    else os.path.join(BASE_DIR, "instance")
+)
 
 
 class Config:
@@ -27,7 +32,7 @@ class Config:
     # SQLite database lives in the Flask instance folder (not version
     # controlled), so local dev data never gets committed by accident.
     SQLALCHEMY_DATABASE_URI = os.environ.get(
-        "DATABASE_URL", f"sqlite:///{os.path.join(BASE_DIR, 'instance', 'cybershield.db')}"
+        "DATABASE_URL", f"sqlite:///{os.path.join(RUNTIME_DIR, 'cybershield.db')}"
     )
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SQLALCHEMY_ENGINE_OPTIONS = {
@@ -53,7 +58,7 @@ class Config:
     }
     
     # Upload folder
-    UPLOAD_FOLDER = os.path.join(BASE_DIR, "instance", "uploads")
+    UPLOAD_FOLDER = os.path.join(RUNTIME_DIR, "uploads")
     
     # Rate limiting defaults
     RATELIMIT_ENABLED = True
