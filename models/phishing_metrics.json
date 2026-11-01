@@ -1,0 +1,23 @@
+{
+  "accuracy": 1.0,
+  "precision": 1.0,
+  "recall": 1.0,
+  "f1_score": 1.0,
+  "confusion_matrix": [
+    [
+      110,
+      0
+    ],
+    [
+      0,
+      110
+    ]
+  ],
+  "positive_label_name": "Phishing Email",
+  "negative_label_name": "Legitimate Email",
+  "cv_f1_mean": 1.0,
+  "cv_f1_std": 0.0,
+  "dataset_size": 1100,
+  "train_size": 880,
+  "test_size": 220
+}

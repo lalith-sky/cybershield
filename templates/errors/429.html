@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>429 - Too Many Requests | CyberShield AI</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>.error-container{min-height:100vh;display:flex;align-items:center;justify-content:center;text-align:center;padding:2rem}.error-content{max-width:600px}.error-code{font-size:8rem;font-weight:700;background:linear-gradient(135deg,#F59E0B,#D97706);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin:0}.error-message{font-size:1.5rem;margin:1rem 0;color:#fff}.error-description{color:#a0a0a0;margin-bottom:2rem}.error-btn{display:inline-block;padding:.75rem 2rem;background:linear-gradient(135deg,#00E5FF,#00BFFF);color:#0A192F;text-decoration:none;border-radius:8px;font-weight:600;transition:transform .3s}.error-btn:hover{transform:translateY(-2px)}</style>
+</head>
+<body>
+    <div class="error-container">
+        <div class="error-content">
+            <h1 class="error-code">429</h1>
+            <h2 class="error-message">Too Many Requests</h2>
+            <p class="error-description">You've made too many requests. Please slow down and try again later.</p>
+            <a href="{{ url_for('main.index') }}" class="error-btn">Return to Home</a>
+        </div>
+    </div>
+</body>
+</html>

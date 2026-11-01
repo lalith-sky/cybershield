@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CyberShield AI - Command Center</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;900&family=Rajdhani:wght@300;400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+    <!-- Background Effects -->
+    <div class="cyber-grid"></div>
+    <div class="gradient-orb orb-1"></div>
+    <div class="gradient-orb orb-2"></div>
+    <canvas id="particles"></canvas>
+
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <div class="logo">
+                <div class="logo-icon">
+                    <svg viewBox="0 0 24 24" fill="none">
+                        <path d="M12 2L4 5.5V11c0 5.2 3.4 9.7 8 11 4.6-1.3 8-5.8 8-11V5.5L12 2z" stroke="currentColor" stroke-width="2"/>
+                        <path d="M9 12l2 2 4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                </div>
+                <div class="logo-text">
+                    <span class="brand-main">CyberShield</span>
+                    <span class="brand-sub">AI</span>
+                </div>
+            </div>
+            <div class="operator-info">
+                <span class="operator-label">{{ current_user.username|upper if current_user.is_authenticated else "GUEST_OPERATOR" }}</span>
+                <span class="operator-status">
+                    <span class="status-dot"></span>
+                    Active Session
+                </span>
+            </div>
+        </div>
+
+        <nav class="sidebar-nav">
+            <a href="#" class="nav-item active" data-section="dashboard">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="3" width="7" height="7" />
+                    <rect x="14" y="3" width="7" height="7" />
+                    <rect x="14" y="14" width="7" height="7" />
+                    <rect x="3" y="14" width="7" height="7" />
+                </svg>
+                <span>Dashboard</span>
+            </a>
+            <a href="#" class="nav-item" data-section="analyzer">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="11" cy="11" r="8"/>
+                    <path d="m21 21-4.35-4.35"/>
+                </svg>
+                <span>AI Testing</span>
+            </a>
+            <a href="#" class="nav-item" data-section="scanner">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/>
+                    <polyline points="14 2 14 8 20 8"/>
+                </svg>
+                <span>URL Scan</span>
+            </a>
+            <a href="#" class="nav-item" data-section="models">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="3"/>
+                    <path d="M12 1v6m0 6v6M5.64 5.64l4.24 4.24m4.24 4.24l4.24 4.24M1 12h6m6 0h6M5.64 18.36l4.24-4.24m4.24-4.24l4.24-4.24"/>
+                </svg>
+                <span>ML Models</span>
+            </a>
+            <a href="#" class="nav-item" data-section="threats">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                    <line x1="12" y1="9" x2="12" y2="13"/>
+                    <line x1="12" y1="17" x2="12.01" y2="17"/>
+                </svg>
+                <span>Threats</span>
+            </a>
+            <a href="#" class="nav-item" data-section="activity">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+                </svg>
+                <span>Activity</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <div class="system-status">
+                <div class="status-item">
+                    <span class="status-label">THREAT_LEVEL</span>
+                    <span class="status-value threat-low"><span id="sideRisk">0.0</span><span class="unit">/10</span></span>
+                </div>
+                <div class="status-item">
+                    <span class="status-label">UPTIME</span>
+                    <span class="status-value">99.8<span class="unit">%</span></span>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Top Bar -->
+        <header class="top-bar">
+            <div class="search-bar">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="11" cy="11" r="8"/>
+                    <path d="m21 21-4.35-4.35"/>
+                </svg>
+                <input type="text" placeholder="Search threats, logs, or analyze content...">
+            </div>
+            <div class="top-bar-actions">
+                <button class="icon-btn" title="Notifications">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+                        <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+                    </svg>
+                    <span class="badge" id="notifBadge" style="display:none">0</span>
+                </button>
+                <button class="icon-btn" title="Settings">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="3"/>
+                        <path d="M12 1v6m0 6v6M5.64 5.64l4.24 4.24m4.24 4.24l4.24 4.24M1 12h6m6 0h6M5.64 18.36l4.24-4.24m4.24-4.24l4.24-4.24"/>
+                    </svg>
+                </button>
+                {% if current_user.is_authenticated %}
+                <div class="user-menu">
+                    <div class="avatar">{{ current_user.username[0].upper() }}</div>
+                    <span>{{ current_user.username }}</span>
+                    <a href="/auth/logout" style="margin-left:10px;color:#00E5FF;font-size:12px">Logout</a>
+                </div>
+                {% else %}
+                <a href="/auth/login" class="btn-secondary" style="text-decoration:none;padding:6px 14px">Login</a>
+                {% endif %}
+            </div>
+        </header>
+
+        <!-- Dashboard Section -->
+        <section class="content-section active" id="section-dashboard">
+            <div class="section-header">
+                <div>
+                    <h1 class="section-title">SOC Dashboard</h1>
+                    <p class="section-subtitle">Real-time threat intelligence and system metrics</p>
+                </div>
+                <div class="header-actions">
+                    <a class="btn-secondary" href="/api/export" style="text-decoration:none">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                            <polyline points="7 10 12 15 17 10"/>
+                            <line x1="12" y1="15" x2="12" y2="3"/>
+                        </svg>
+                        Export Report (CSV)
+                    </a>
+                </div>
+            </div>
+
+            <!-- Metrics Grid -->
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div class="metric-header">
+                        <span class="metric-label">TOTAL SCANS</span>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/>
+                            <polyline points="17 6 23 6 23 12"/>
+                        </svg>
+                    </div>
+                    <div class="metric-value" id="mTotal">0</div>
+                    <div class="metric-change positive" id="mTotalSub">All scans recorded</div>
+                </div>
+
+                <div class="metric-card alert">
+                    <div class="metric-header">
+                        <span class="metric-label">THREATS BLOCKED</span>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                        </svg>
+                    </div>
+                    <div class="metric-value threat" id="mThreats">0</div>
+                    <div class="metric-change negative" id="mThreatsSub">0% threat rate</div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-header">
+                        <span class="metric-label">SAFE CONTENT</span>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="20 6 9 17 4 12"/>
+                        </svg>
+                    </div>
+                    <div class="metric-value safe" id="mSafe">0</div>
+                    <div class="metric-change positive" id="mSafeSub">0% verification rate</div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-header">
+                        <span class="metric-label">RISK SCORE</span>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"/>
+                            <polyline points="12 6 12 12 16 14"/>
+                        </svg>
+                    </div>
+                    <div class="metric-value"><span id="mRisk">0.0</span><span class="metric-unit">/10</span></div>
+                    <div class="metric-change" id="mRiskSub">Low</div>
+                </div>
+            </div>
+
+            <div class="quick-start-card">
+                <div>
+                    <span class="eyebrow">START HERE</span>
+                    <h2>Check an email, job offer, or website link</h2>
+                    <p>Paste suspicious text or a URL into the scanner. CyberShield analyzes it immediately and records the result in your activity feed.</p>
+                </div>
+                <div class="quick-start-actions">
+                    <button class="btn-primary jump-to-section" data-target="analyzer">Analyze text</button>
+                    <button class="btn-secondary jump-to-section" data-target="scanner">Scan a URL</button>
+                </div>
+                <div class="quick-start-steps">
+                    <span><strong>1</strong> Choose a scanner</span>
+                    <span><strong>2</strong> Paste the data</span>
+                    <span><strong>3</strong> Select Analyze or Deep Scan</span>
+                </div>
+            </div>
+
+            <!-- Charts Row -->
+            <div class="charts-row">
+                <div class="chart-card">
+                    <div class="card-header">
+                        <h3>Threat Distribution</h3>
+                        <div class="card-actions">
+                            <button class="btn-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="12" cy="12" r="1"/>
+                                    <circle cx="19" cy="12" r="1"/>
+                                    <circle cx="5" cy="12" r="1"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                    <canvas id="threatChart"></canvas>
+                </div>
+
+                <div class="chart-card">
+                    <div class="card-header">
+                        <h3>Detection Timeline</h3>
+                        <span class="live-indicator">LAST 24H</span>
+                    </div>
+                    <canvas id="timelineChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Activity Feed & Threat Intel -->
+            <div class="bottom-grid">
+                <div class="activity-card">
+                    <div class="card-header">
+                        <h3>Recent Activity</h3>
+                        <span class="live-indicator">
+                            <span class="pulse-dot"></span>
+                            LIVE
+                        </span>
+                    </div>
+                    <div class="activity-feed" id="activityFeed">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+
+                <div class="threat-intel-card">
+                    <div class="card-header">
+                        <h3>Threat Intelligence</h3>
+                        <span class="intel-badge" id="intelBadge">LIVE</span>
+                    </div>
+                    <div class="threat-list" id="dashThreatList"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- AI Testing Section -->
+        <section class="content-section" id="section-analyzer">
+            <div class="section-header">
+                <div>
+                    <h1 class="section-title">Neural Identity Verification</h1>
+                    <p class="section-subtitle">AI-powered content analysis and threat detection</p>
+                </div>
+            </div>
+
+            <div class="analyzer-layout">
+                <div class="analyzer-input">
+                    <div class="input-card">
+                        <div class="card-header">
+                            <div>
+                                <h3>Content Input</h3>
+                                <p class="input-help">Paste an email, message, or job offer below. Do not enter passwords or private credentials.</p>
+                            </div>
+                            <div class="model-selector">
+                                <button class="model-btn active" data-model="job">Job Scam</button>
+                                <button class="model-btn" data-model="phishing">Phishing</button>
+                            </div>
+                        </div>
+                        <textarea class="cyber-textarea" id="analyzerInput" aria-label="Text to analyze" placeholder="Example: Congratulations, you are selected. Pay a registration fee to start..."></textarea>
+                        <div class="example-actions">
+                            <span>Need a test?</span>
+                            <button type="button" class="example-btn" data-example="job">Use job scam example</button>
+                            <button type="button" class="example-btn" data-example="phishing">Use phishing example</button>
+                        </div>
+                        <p class="input-feedback" id="analyzerFeedback" role="status"></p>
+                        <div class="input-actions">
+                            <button class="btn-primary" id="analyzeBtn">
+                                <span>ANALYZE</span>
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="9 18 15 12 9 6"/>
+                                </svg>
+                            </button>
+                            <button class="btn-secondary" id="clearBtn">Clear</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="analyzer-result">
+                    <div class="result-card-main" id="analysisResult">
+                        <div class="scanning-state" id="scanningState">
+                            <div class="scanner-animation">
+                                <div class="scanner-ring"></div>
+                                <div class="scanner-ring"></div>
+                                <div class="scanner-ring"></div>
+                                <div class="scanner-pulse"></div>
+                            </div>
+                            <p class="scan-text">AWAITING INPUT</p>
+                        </div>
+
+                        <div class="result-display" id="resultDisplay" style="display:none;">
+                            <div class="verdict-section">
+                                <div class="verdict-badge" id="verdictBadge">SAFE</div>
+                                <div class="confidence-gauge">
+                                    <canvas id="confidenceGauge" width="200" height="200"></canvas>
+                                    <div class="gauge-value" id="gaugeValue">0%</div>
+                                </div>
+                            </div>
+
+                            <div class="analysis-details">
+                                <div class="detail-section">
+                                    <h4>Risk Assessment</h4>
+                                    <div class="risk-bars">
+                                        <div class="risk-bar">
+                                            <span class="risk-label">Threat Level</span>
+                                            <div class="progress-bar">
+                                                <div class="progress-fill" id="threatLevel" style="width: 0%"></div>
+                                            </div>
+                                            <span class="risk-value" id="threatValue">0%</span>
+                                        </div>
+                                        <div class="risk-bar">
+                                            <span class="risk-label">Legitimacy</span>
+                                            <div class="progress-bar">
+                                                <div class="progress-fill safe" id="legitLevel" style="width: 0%"></div>
+                                            </div>
+                                            <span class="risk-value" id="legitValue">0%</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="detail-section">
+                                    <h4>Signal Terms Detected</h4>
+                                    <div class="term-cloud" id="termCloud">
+                                        <!-- Populated by JS -->
+                                    </div>
+                                </div>
+
+                                <div class="detail-section">
+                                    <h4>AI Explanation</h4>
+                                    <div class="explanation-text" id="explanationText">
+                                        The model analyzes linguistic patterns and suspicious indicators...
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- URL SCANNER SECTION -->
+        <section class="content-section" id="section-scanner">
+            <div class="section-header">
+                <div>
+                    <h1 class="section-title">URL Neural Analyzer</h1>
+                    <p class="section-subtitle">Deep scan URLs for malicious content and phishing indicators</p>
+                </div>
+            </div>
+
+            <div class="scanner-grid">
+                <div class="scanner-input-card">
+                    <div class="card-header">
+                        <h3>URL Input</h3>
+                        <span class="scan-count">URL Scans: <strong id="urlScanCount">0</strong></span>
+                    </div>
+                    <div class="url-input-group">
+                        <input type="url" id="urlInput" class="url-input" aria-label="URL to scan" placeholder="Paste a complete URL, e.g. https://example.com/login">
+                        <button class="btn-primary" id="scanUrlBtn">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="11" cy="11" r="8"/>
+                                <path d="m21 21-4.35-4.35"/>
+                            </svg>
+                            <span>DEEP SCAN</span>
+                        </button>
+                    </div>
+                    
+                    <div class="scan-options">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="optSsl"> Live TLS certificate check
+                        </label>
+                    </div>
+                    <p class="input-help">Use the full link copied from an email, message, or website. The scan is offline by default; live TLS checking is optional.</p>
+                    <p class="input-feedback" id="urlFeedback" role="status"></p>
+                </div>
+
+                <div class="url-result-card" id="urlResultCard">
+                    <div class="url-empty-state" id="urlEmptyState">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="64" height="64">
+                            <circle cx="12" cy="12" r="10"/>
+                            <path d="M12 16v-4"/>
+                            <path d="M12 8h.01"/>
+                        </svg>
+                        <p>Enter a URL to begin scanning</p>
+                    </div>
+
+                    <div class="url-scan-result" id="urlScanResult" style="display:none;">
+                        <div class="url-risk-header">
+                            <div class="risk-score-circle" id="riskScoreCircle">
+                                <div class="score-value" id="riskScore">0</div>
+                                <div class="score-label">RISK SCORE</div>
+                            </div>
+                            <div class="risk-verdict">
+                                <h3 id="urlVerdict">ANALYZING...</h3>
+                                <p id="urlVerdictDesc">Running comprehensive security checks...</p>
+                            </div>
+                        </div>
+
+                        <div class="url-details-grid">
+                            <div class="detail-box">
+                                <span class="detail-label">DOMAIN ENTROPY</span>
+                                <span class="detail-value" id="domainEntropy">--</span>
+                            </div>
+                            <div class="detail-box">
+                                <span class="detail-label">PATH LENGTH</span>
+                                <span class="detail-value" id="pathLength">--</span>
+                            </div>
+                            <div class="detail-box">
+                                <span class="detail-label">SSL CERTIFICATE</span>
+                                <span class="detail-value" id="sslStatus">--</span>
+                            </div>
+                            <div class="detail-box">
+                                <span class="detail-label">SPECIAL CHARS</span>
+                                <span class="detail-value" id="specialChars">--</span>
+                            </div>
+                        </div>
+
+                        <div class="url-indicators">
+                            <h4>THREAT INDICATORS</h4>
+                            <div id="threatIndicators" class="indicator-list"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="recent-scans-card">
+                <div class="card-header">
+                    <h3>Recent URL Scans</h3>
+                </div>
+                <table class="cyber-table" id="recentUrlTable">
+                    <thead>
+                        <tr>
+                            <th>URL</th>
+                            <th>Risk</th>
+                            <th>Status</th>
+                            <th>Time</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="recentUrlBody">
+                    <tr><td colspan="5" class="time-cell">No URL scans yet.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- ML MODELS SECTION -->
+        <section class="content-section" id="section-models">
+            <div class="section-header">
+                <div>
+                    <h1 class="section-title">Neural Weight Configuration</h1>
+                    <p class="section-subtitle">Active ML models and performance metrics</p>
+                </div>
+            </div>
+
+            <div class="model-grid" id="modelGrid"></div>
+            <div class="chart-card" style="margin-top:24px"><div class="card-header"><h3>Confusion Matrix / Metrics</h3></div><canvas id="metricsChart" height="110"></canvas></div>
+
+        </section>
+
+        <!-- THREATS SECTION -->
+        <section class="content-section" id="section-threats">
+            <div class="section-header">
+                <div>
+                    <h1 class="section-title">Threat Intel</h1>
+                    <p class="section-subtitle">Live threat database and MITRE ATT&CK mapping</p>
+                </div>
+            </div>
+
+            <div class="threat-stats-row" id="threatStats"></div>
+            <div class="threats-grid" id="threatsGrid"></div>
+
+        </section>
+
+        <!-- ACTIVITY SECTION -->
+        <section class="content-section" id="section-activity">
+            <div class="section-header">
+                <div>
+                    <h1 class="section-title">Activity Monitor</h1>
+                    <p class="section-subtitle">Real-time system activity and audit logs</p>
+                </div>
+                <div class="header-actions">
+                    <button class="btn-secondary" id="refreshActivityBtn" type="button">Refresh</button>
+                    <a class="btn-secondary" href="/api/export" style="text-decoration:none">Export CSV</a>
+                </div>
+            </div>
+
+            <div class="activity-overview">
+                <div class="activity-stat"><strong id="activityVisibleCount">0</strong><span>Visible events</span></div>
+                <div class="activity-stat threat"><strong id="activityThreatCount">0</strong><span>Threats</span></div>
+                <div class="activity-stat safe"><strong id="activitySafeCount">0</strong><span>Safe results</span></div>
+                <div class="activity-status" id="activityStatus" role="status">Ready</div>
+            </div>
+            <div class="activity-toolbar">
+                <label for="activityFilter">Show</label>
+                <select class="cyber-select" id="activityFilter">
+                    <option value="all">All Events</option>
+                    <option value="threat">Threats Only</option>
+                    <option value="job_scam">Job Scam Model</option>
+                    <option value="phishing">Phishing Model</option>
+                    <option value="url">URL Scanner</option>
+                </select>
+                <span class="activity-hint">Newest scans appear first. Run a scan from AI Testing or URL Scan to add an event.</span>
+            </div>
+            <div class="activity-timeline" id="activityTimeline"></div>
+
+        </section>
+    </main>
+
+    <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+</body>
+</html>

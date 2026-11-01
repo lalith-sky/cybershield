@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Profile — CyberShield AI</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/auth.css') }}">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <a class="brand" href="{{ url_for('main.index') }}" style="text-decoration:none; color:inherit;">
+      <span class="brand-text">CyberShield<span class="brand-ai">AI</span></span>
+    </a>
+    <a href="{{ url_for('auth.logout') }}" class="status-chip" style="text-decoration:none;">
+      <span class="mono">SIGN OUT</span>
+    </a>
+  </div>
+</header>
+
+<main class="console" style="max-width: 780px;">
+  <div class="profile-header">
+    <div>
+      <h1 style="font-family: var(--font-display); margin: 0 0 4px;">{{ user.username }}</h1>
+      <p class="small-muted" style="margin:0;">{{ user.email }}</p>
+    </div>
+    <span class="small-muted mono">
+      Member since {{ user.created_at.strftime('%b %Y') if user.created_at else '—' }}
+    </span>
+  </div>
+
+  <h2 style="font-family: var(--font-display); font-size: 1.1rem;">Recent Scans</h2>
+
+  {% if recent_scans %}
+    {% for scan in recent_scans %}
+      <div class="profile-scan-row">
+        <div>
+          <div class="profile-scan-module">{{ scan.module }} · {{ scan.created_at.strftime('%Y-%m-%d %H:%M') }}</div>
+          <div>{{ scan.prediction }}</div>
+        </div>
+        <span class="verdict-stamp {{ 'threat' if scan.is_threat else '' }}">
+          {{ scan.confidence }}%
+        </span>
+      </div>
+    {% endfor %}
+  {% else %}
+    <p class="small-muted">No scans yet — run the scanner on the home page to get started.</p>
+  {% endif %}
+</main>
+
+</body>
+</html>

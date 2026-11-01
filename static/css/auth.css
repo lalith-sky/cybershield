@@ -1,0 +1,148 @@
+/* =========================================================
+   Auth pages (login / register / profile)
+   Reuses the design tokens from style.css (--bg, --panel, --cyan, etc.)
+   so these pages feel native to the rest of the app. Kept intentionally
+   minimal here -- the full premium redesign lands in a later phase.
+   ========================================================= */
+
+.auth-shell {
+  min-height: calc(100vh - 64px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 20px;
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 420px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 36px 32px;
+}
+
+.auth-card h1 {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  margin: 0 0 6px;
+}
+
+.auth-card .auth-sub {
+  color: var(--text-muted);
+  font-size: 0.88rem;
+  margin: 0 0 26px;
+}
+
+.auth-field {
+  margin-bottom: 18px;
+}
+
+.auth-field label {
+  display: block;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+  font-family: var(--font-mono);
+  letter-spacing: 0.02em;
+}
+
+.auth-field input {
+  width: 100%;
+  background: var(--bg-soft);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 11px 14px;
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 0.92rem;
+  transition: border-color 0.15s ease;
+}
+
+.auth-field input:focus {
+  outline: none;
+  border-color: var(--cyan);
+}
+
+.auth-submit {
+  width: 100%;
+  padding: 12px 16px;
+  border-radius: var(--radius);
+  border: none;
+  background: var(--cyan);
+  color: #06120F;
+  font-weight: 600;
+  font-size: 0.92rem;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.auth-submit:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 24px -8px rgba(76, 224, 198, 0.5);
+}
+
+.auth-footer-link {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 0.86rem;
+  color: var(--text-muted);
+}
+
+.auth-footer-link a {
+  color: var(--cyan);
+  text-decoration: none;
+}
+
+.auth-flash {
+  border-radius: var(--radius);
+  padding: 10px 14px;
+  font-size: 0.84rem;
+  margin-bottom: 14px;
+  border: 1px solid var(--border);
+}
+
+.auth-flash.error {
+  border-color: rgba(255, 100, 100, 0.4);
+  color: #FF9E9E;
+  background: rgba(255, 100, 100, 0.08);
+}
+
+.auth-flash.success {
+  border-color: rgba(76, 224, 198, 0.4);
+  color: var(--cyan);
+  background: var(--cyan-dim);
+}
+
+.auth-flash.warning {
+  border-color: rgba(255, 180, 84, 0.4);
+  color: var(--amber);
+  background: var(--amber-dim);
+}
+
+/* Profile page */
+.profile-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 24px;
+}
+
+.profile-scan-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  margin-bottom: 10px;
+  gap: 12px;
+}
+
+.profile-scan-module {
+  font-family: var(--font-mono);
+  font-size: 0.76rem;
+  color: var(--text-muted);
+}
