@@ -17,6 +17,7 @@
         initParticles();
         initDashboard();
         initAnalyzer();
+        initTopBarControls();
         animateMetrics();
     });
 
@@ -43,13 +44,68 @@
                 state.activeSection = sectionId;
             });
 
-            document.querySelectorAll('.jump-to-section').forEach(button => {
-                button.addEventListener('click', () => {
-                    const target = document.querySelector(`.nav-item[data-section="${button.dataset.target}"]`);
-                    if (target) target.click();
-                });
+        });
+
+        document.querySelectorAll('.jump-to-section').forEach(button => {
+            button.addEventListener('click', () => {
+                const target = document.querySelector(`.nav-item[data-section="${button.dataset.target}"]`);
+                if (target) target.click();
             });
         });
+    }
+
+    function initTopBarControls() {
+        const settingsBtn = document.getElementById('settingsBtn');
+        const popover = document.getElementById('settingsPopover');
+        const closeSettings = document.getElementById('closeSettingsBtn');
+        const themeToggle = document.getElementById('themeToggle');
+        const notificationsBtn = document.getElementById('notificationsBtn');
+        const search = document.getElementById('globalSearch');
+        const savedTheme = localStorage.getItem('cybershield-theme') || 'dark';
+
+        document.documentElement.dataset.theme = savedTheme;
+        if (themeToggle) themeToggle.checked = savedTheme === 'light';
+        if (settingsBtn && popover) settingsBtn.addEventListener('click', () => {
+            popover.hidden = !popover.hidden;
+        });
+        if (closeSettings && popover) closeSettings.addEventListener('click', () => {
+            popover.hidden = true;
+        });
+        if (themeToggle) themeToggle.addEventListener('change', () => {
+            const theme = themeToggle.checked ? 'light' : 'dark';
+            document.documentElement.dataset.theme = theme;
+            localStorage.setItem('cybershield-theme', theme);
+        });
+        if (notificationsBtn) notificationsBtn.addEventListener('click', () => {
+            const activity = document.querySelector('.nav-item[data-section="activity"]');
+            const filter = document.getElementById('activityFilter');
+            if (filter) filter.value = 'threat';
+            if (activity) activity.click();
+            const badge = document.getElementById('notifBadge');
+            if (badge) badge.style.display = 'none';
+        });
+        if (search) search.addEventListener('keydown', event => {
+            if (event.key !== 'Enter') return;
+            const value = search.value.trim().toLowerCase();
+            const activity = document.querySelector('.nav-item[data-section="activity"]');
+            if (!value) {
+                if (activity) activity.click();
+                return;
+            }
+            if (activity) activity.click();
+            setTimeout(() => filterActivityRows(value), 0);
+        });
+    }
+
+    function filterActivityRows(query) {
+        document.querySelectorAll('#activityTimeline .timeline-item').forEach(item => {
+            item.hidden = !item.textContent.toLowerCase().includes(query);
+        });
+        const status = document.getElementById('activityStatus');
+        if (status) {
+            const count = [...document.querySelectorAll('#activityTimeline .timeline-item:not([hidden])')].length;
+            status.textContent = `${count} matching event${count === 1 ? '' : 's'}`;
+        }
     }
 
     // ============================================

@@ -51,6 +51,20 @@
     --transition-slow: 0.5s ease;
 }
 
+:root[data-theme="light"] {
+    --bg-primary: #eef6fb;
+    --bg-secondary: #f7fbfe;
+    --bg-tertiary: #ffffff;
+    --bg-overlay: rgba(247, 251, 254, 0.94);
+    --glass-bg: rgba(255, 255, 255, 0.88);
+    --glass-border: rgba(14, 165, 233, 0.22);
+    --glass-glow: rgba(14, 165, 233, 0.08);
+    --text-primary: #10243b;
+    --text-secondary: #40566d;
+    --text-muted: #63788d;
+    --text-dim: #8294a5;
+}
+
 * {
     margin: 0;
     padding: 0;
@@ -59,7 +73,6 @@
 
 html {
     font-size: 16px;
-    color-scheme: dark;
 }
 
 body {
@@ -71,22 +84,6 @@ body {
     line-height: 1.6;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-}
-
-button,
-input,
-textarea,
-select {
-    font: inherit;
-}
-
-button:focus-visible,
-a:focus-visible,
-input:focus-visible,
-textarea:focus-visible,
-select:focus-visible {
-    outline: 2px solid var(--cyan-primary);
-    outline-offset: 2px;
 }
 
 /* ============================================
@@ -407,34 +404,6 @@ select:focus-visible {
     color: var(--text-muted);
 }
 
-.cyber-select {
-    min-width: 180px;
-    padding: 10px 34px 10px 12px;
-    appearance: none;
-    background-color: var(--bg-tertiary);
-    background-image: linear-gradient(45deg, transparent 50%, var(--cyan-primary) 50%),
-        linear-gradient(135deg, var(--cyan-primary) 50%, transparent 50%);
-    background-position: calc(100% - 17px) 50%, calc(100% - 12px) 50%;
-    background-size: 5px 5px, 5px 5px;
-    background-repeat: no-repeat;
-    border: 1px solid var(--glass-border);
-    border-radius: 8px;
-    color: var(--text-primary);
-    cursor: pointer;
-}
-
-.cyber-select:hover,
-.cyber-select:focus {
-    border-color: var(--cyan-primary);
-    background-color: #152238;
-    outline: none;
-}
-
-.cyber-select option {
-    background: var(--bg-tertiary);
-    color: var(--text-primary);
-}
-
 .top-bar-actions {
     display: flex;
     align-items: center;
@@ -453,6 +422,80 @@ select:focus-visible {
     justify-content: center;
     cursor: pointer;
     transition: all var(--transition-fast);
+}
+
+.settings-popover {
+    position: fixed;
+    top: 76px;
+    right: 32px;
+    z-index: 120;
+    width: 250px;
+    padding: 16px;
+    border: 1px solid var(--glass-border);
+    border-radius: 12px;
+    background: var(--glass-bg);
+    box-shadow: 0 12px 35px rgba(0, 0, 0, .35);
+}
+
+.settings-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+}
+
+.popover-close {
+    border: 0;
+    background: transparent;
+    color: var(--text-secondary);
+    font-size: 22px;
+    cursor: pointer;
+}
+
+.theme-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: var(--text-primary);
+    cursor: pointer;
+}
+
+.theme-toggle input {
+    position: absolute;
+    opacity: 0;
+}
+
+.toggle-track {
+    width: 42px;
+    height: 22px;
+    border-radius: 999px;
+    background: var(--text-muted);
+    transition: background var(--transition-fast);
+}
+
+.toggle-track::after {
+    content: '';
+    display: block;
+    width: 18px;
+    height: 18px;
+    margin: 2px;
+    border-radius: 50%;
+    background: #fff;
+    transition: transform var(--transition-fast);
+}
+
+.theme-toggle input:checked + .toggle-track {
+    background: var(--cyan-primary);
+}
+
+.theme-toggle input:checked + .toggle-track::after {
+    transform: translateX(20px);
+}
+
+.settings-popover p {
+    margin-top: 12px;
+    color: var(--text-muted);
+    font-size: 12px;
 }
 
 .icon-btn:hover {
@@ -1469,50 +1512,6 @@ select:focus-visible {
     .section-header {
         flex-direction: column;
         align-items: flex-start;
-    }
-
-    .top-bar {
-        flex-wrap: wrap;
-        height: auto;
-        gap: 12px;
-    }
-
-    .search-bar {
-        order: 2;
-        flex: 1 1 100%;
-        max-width: none;
-    }
-
-    .top-bar-actions {
-        margin-left: auto;
-    }
-
-    .quick-start-card {
-        grid-template-columns: 1fr;
-    }
-
-    .quick-start-actions,
-    .quick-start-steps {
-        gap: 10px;
-        flex-wrap: wrap;
-    }
-
-    .activity-overview {
-        grid-template-columns: repeat(2, 1fr);
-    }
-
-    .activity-status {
-        justify-content: flex-start;
-        grid-column: 1 / -1;
-    }
-
-    .activity-toolbar {
-        align-items: flex-start;
-        flex-direction: column;
-    }
-
-    .cyber-select {
-        width: 100%;
     }
     
     .metrics-grid {
