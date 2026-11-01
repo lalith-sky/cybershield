@@ -25,7 +25,7 @@ Python · Flask · scikit-learn · pandas · SQLAlchemy (embedded SQLite — no 
 ```bash
 python -m venv venv && source venv/bin/activate      # Windows: venv\Scripts\activate
 pip install -r requirements.txt
-python app.py                                        # http://localhost:5000
+python run.py                                        # http://localhost:5000
 python -m pytest tests -q                            # run tests
 python ml/train_model.py job && python ml/train_model.py phishing   # optional retrain
 ```

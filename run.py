@@ -6,7 +6,7 @@ package (Blueprints, services, database models) so it can grow without
 turning into a single giant file again.
 
 Run exactly as before:
-    python app.py
+    python run.py
 
 The old single-file implementation is preserved at
 app_legacy_backup.py.bak for reference / diffing.
