@@ -103,7 +103,11 @@ def stats():
 
 @api_bp.route("/activity")
 def activity():
-    limit = min(int(request.args.get("limit", 20)), 100)
+    try:
+        limit = int(request.args.get("limit", 20))
+    except (TypeError, ValueError):
+        limit = 20
+    limit = max(1, min(limit, 100))
     kind = request.args.get("type", "all")
     q = Scan.query
     if kind == "threat":

@@ -2100,6 +2100,33 @@ body {
     border-left-color: var(--success);
 }
 
+.timeline-item .badge {
+    flex: 0 0 auto;
+    min-width: 72px;
+    padding: 5px 8px;
+    border: 1px solid currentColor;
+    border-radius: 999px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: .5px;
+    text-align: center;
+}
+
+.timeline-item .badge.critical {
+    color: var(--danger);
+    background: rgba(239, 68, 68, .12);
+}
+
+.timeline-item .badge.warning {
+    color: var(--warning);
+    background: rgba(250, 204, 21, .12);
+}
+
+.timeline-item .badge.safe {
+    color: var(--success);
+    background: rgba(34, 197, 94, .12);
+}
+
 .timeline-content {
     flex: 1;
     min-width: 0;

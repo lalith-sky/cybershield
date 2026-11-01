@@ -47,3 +47,9 @@ def test_stats_reflect_scans(client):
 def test_dashboard_apis(client):
     for path in ["/api/activity", "/api/models", "/api/threats", "/api/export", "/dashboard"]:
         assert client.get(path).status_code == 200
+
+
+def test_activity_handles_invalid_and_out_of_range_limits(client):
+    assert client.get("/api/activity?limit=invalid").status_code == 200
+    assert client.get("/api/activity?limit=0").status_code == 200
+    assert client.get("/api/activity?limit=999").status_code == 200
