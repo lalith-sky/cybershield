@@ -59,6 +59,7 @@
 
 html {
     font-size: 16px;
+    color-scheme: dark;
 }
 
 body {
@@ -70,6 +71,22 @@ body {
     line-height: 1.6;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+}
+
+button,
+input,
+textarea,
+select {
+    font: inherit;
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+    outline: 2px solid var(--cyan-primary);
+    outline-offset: 2px;
 }
 
 /* ============================================
@@ -388,6 +405,34 @@ body {
 
 .search-bar input::placeholder {
     color: var(--text-muted);
+}
+
+.cyber-select {
+    min-width: 180px;
+    padding: 10px 34px 10px 12px;
+    appearance: none;
+    background-color: var(--bg-tertiary);
+    background-image: linear-gradient(45deg, transparent 50%, var(--cyan-primary) 50%),
+        linear-gradient(135deg, var(--cyan-primary) 50%, transparent 50%);
+    background-position: calc(100% - 17px) 50%, calc(100% - 12px) 50%;
+    background-size: 5px 5px, 5px 5px;
+    background-repeat: no-repeat;
+    border: 1px solid var(--glass-border);
+    border-radius: 8px;
+    color: var(--text-primary);
+    cursor: pointer;
+}
+
+.cyber-select:hover,
+.cyber-select:focus {
+    border-color: var(--cyan-primary);
+    background-color: #152238;
+    outline: none;
+}
+
+.cyber-select option {
+    background: var(--bg-tertiary);
+    color: var(--text-primary);
 }
 
 .top-bar-actions {
@@ -1424,6 +1469,50 @@ body {
     .section-header {
         flex-direction: column;
         align-items: flex-start;
+    }
+
+    .top-bar {
+        flex-wrap: wrap;
+        height: auto;
+        gap: 12px;
+    }
+
+    .search-bar {
+        order: 2;
+        flex: 1 1 100%;
+        max-width: none;
+    }
+
+    .top-bar-actions {
+        margin-left: auto;
+    }
+
+    .quick-start-card {
+        grid-template-columns: 1fr;
+    }
+
+    .quick-start-actions,
+    .quick-start-steps {
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .activity-overview {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .activity-status {
+        justify-content: flex-start;
+        grid-column: 1 / -1;
+    }
+
+    .activity-toolbar {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .cyber-select {
+        width: 100%;
     }
     
     .metrics-grid {
